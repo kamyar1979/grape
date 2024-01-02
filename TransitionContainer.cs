@@ -36,7 +36,7 @@
 
         public TransitionContainer<TState, TTransition> ElseWhere(TState state)
         {
-            if (!_stateTable.Contains(_path.Source) || !_stateTable.Contains(_path.Destination))
+            if (!_stateTable.Contains(_path.Source) || !_stateTable.Contains(state))
                 throw new ApplicationException("The specified state name does not exist");
             Holder[_path.Source, state] = ElsewherePredicate<TTransition>.GetInstance().Predicate;;
             return this;
