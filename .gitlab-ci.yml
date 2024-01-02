@@ -1,0 +1,12 @@
+build:
+  stage: build
+  script:
+    - dotnet pack Grape.csproj -c Debug -p:PackageVersion=${CI_COMMIT_TAG} -o ./build
+    - dotnet nuget push ./build/*nupkg --source ${NEXUS_NUGET_REPOSITORY} --api-key ${NEXUS_API_KEY}
+  allow_failure: false
+  only:
+    - /^[0-9]+\.[0-9]+\.[0-9]+$/
+  tags:
+    - dotnet
+    - build
+
