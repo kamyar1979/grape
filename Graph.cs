@@ -1,11 +1,11 @@
 ﻿namespace Grape
 {
-    public class Graph<TNode, TEdge> where TNode : notnull where TEdge : notnull
+    public class Graph<TState, TEdge> where TState : notnull where TEdge : notnull
     {
-        private readonly TNode[] _nodes;
+        private readonly TState[] _nodes;
         private readonly TEdge[][] _adjacency;
 
-        public Graph(ICollection<TNode> nodes)
+        public Graph(ICollection<TState> nodes)
         {
             _nodes = nodes.ToArray();
             _adjacency = new TEdge[nodes.Count][];
@@ -15,21 +15,21 @@
             }
         }
 
-        public TEdge this[TNode from, TNode to]
+        public TEdge this[TState from, TState to]
         {
             get => _adjacency[Array.IndexOf(_nodes, from)][Array.IndexOf(_nodes, to)];
             set => _adjacency[Array.IndexOf(_nodes, from)][Array.IndexOf(_nodes, to)] = value;
         }
 
-        public IEnumerable<TEdge> EdgesFrom(TNode node) =>
+        public IEnumerable<TEdge> EdgesFrom(TState node) =>
             _nodes.Select((_, i) => _adjacency[Array.IndexOf(_nodes, node)][i]);
 
 
-        public IEnumerable<TEdge?> EdgesTo(TNode node) =>
+        public IEnumerable<TEdge?> EdgesTo(TState node) =>
             _nodes.Select((_, i) => _adjacency[Array.IndexOf(_nodes, node)][i]);
 
 
-        public TNode? Next(TNode node, TEdge edge)
+        public TState? Next(TState node, TEdge edge)
         {
             for (var i = 0; i < _nodes.Length; i++)
             {
@@ -40,7 +40,7 @@
             return default;
         }
 
-        public TEdge GetEdge(TNode node1, TNode node2) =>
+        public TEdge GetEdge(TState node1, TState node2) =>
             _adjacency[Array.IndexOf(_nodes, node1)][Array.IndexOf(_nodes, node2)];
     }
 }
