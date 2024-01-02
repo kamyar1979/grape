@@ -1,49 +1,31 @@
 ﻿namespace Grape
 {
-    public class StateMachine<TState, TTransition>(
-        bool ignoreCase,
-        Graph<TState, Predicate<TTransition>> machineGraph) 
+    public class StateMachine<TState, TTransition>
         where TState : notnull where TTransition : notnull
     {
-        private readonly Dictionary<string, TState> _stateTable = ignoreCase
-            ? new Dictionary<string, TState>(StringComparer.InvariantCultureIgnoreCase)
-            : new Dictionary<string, TState>();
 
-        private Graph<TState, Predicate<TTransition>> MachineGraph { get; set; } = machineGraph;
-
-        public TState this[string name]
+        private readonly List<TState> _stateTable;
+        private readonly Graph<TState, Predicate<TTransition>> _machineGraph;
+        public StateMachine(IEnumerable<TState> states, bool ignoreCase = false)
         {
-            get => _stateTable[name];
-            set => _stateTable[name] = value;
-        }
-
-        public StateMachine(Graph<TState, Predicate<TTransition>> machineGraph) : this(true, machineGraph)
-        {
-        }
-
-        public void DeclareStates(IDictionary<string, TState> states)
-        {
-            foreach (var item in states)
-            {
-                _stateTable.Add(item.Key, item.Value);
-            }
-            MachineGraph = new Graph<TState, Predicate<TTransition>>(states.Values);
+            _stateTable = [..states];
+            _machineGraph = new Graph<TState, Predicate<TTransition>>(_stateTable);
         }
 
         public void DeclareTransitions(Action<TransitionContainer<TState, TTransition>> proc)
         {
-            var container = new TransitionContainer<TState, TTransition>(MachineGraph, _stateTable);
+            var container = new TransitionContainer<TState, TTransition>(_machineGraph, _stateTable);
             proc(container);
         }
 
         public TState? Pass(TState currentState, TTransition transition)
         {
-            foreach (var item in MachineGraph.EdgesFrom(currentState))
+            foreach (var item in _machineGraph.EdgesFrom(currentState))
             {
                 if (item == ElsewherePredicate<TTransition>.GetInstance().Predicate) continue;
                 if (item(transition))
                 {
-                    return MachineGraph.Next(currentState, item);
+                    return _machineGraph.Next(currentState, item);
                 }
             }
 
