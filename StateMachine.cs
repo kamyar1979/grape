@@ -22,7 +22,6 @@
         {
             foreach (var item in _machineGraph.EdgesFrom(currentState))
             {
-                if (item == ElsewherePredicate<TTransition>.GetInstance().Predicate) continue;
                 if (item(transition))
                 {
                     return _machineGraph.Next(currentState, item);
