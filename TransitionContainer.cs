@@ -34,16 +34,11 @@
             return this;
         }
 
-        public TransitionContainer<TState, TTransition> ElseWhere()
+        public TransitionContainer<TState, TTransition> ElseWhere(TState state)
         {
             if (!_stateTable.Contains(_path.Source) || !_stateTable.Contains(_path.Destination))
                 throw new ApplicationException("The specified state name does not exist");
-            var pred = ElsewherePredicate<TTransition>.GetInstance().Predicate;
-            Holder[_path.Source, _path.Destination] = pred;
-            _path = new Path<TState, TTransition>
-            {
-                Source = _path.Source
-            };
+            Holder[_path.Source, state] = ElsewherePredicate<TTransition>.GetInstance().Predicate;;
             return this;
         }
 
