@@ -22,7 +22,7 @@
         }
 
         public IEnumerable<TEdge> EdgesFrom(TState node) =>
-            _nodes.Select((_, i) => _adjacency[Array.IndexOf(_nodes, node)][i]);
+            _nodes.Select((_, i) => _adjacency[Array.IndexOf(_nodes, node)][i]).Where(c => c is not null);
 
 
         public IEnumerable<TEdge?> EdgesTo(TState node) =>
