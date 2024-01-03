@@ -34,14 +34,6 @@
             return this;
         }
 
-        public TransitionContainer<TState, TTransition> Else(TState state)
-        {
-            if (!_stateTable.Contains(_path.Source) || !_stateTable.Contains(state))
-                throw new ApplicationException("The specified state name does not exist");
-            Holder[_path.Source, state] = t => !Holder[_path.Source, _path.Destination](t);
-            return this;
-        }
-
         public TransitionContainer<TState, TTransition> If(Predicate<TTransition> pred)
         {
             if (!_stateTable.Contains(_path.Source) || !_stateTable.Contains(_path.Destination))
@@ -50,7 +42,7 @@
             _path = _path with { Condition = pred };
             return this;
         }
-        public TransitionContainer<TState, TTransition> If(Predicate<TTransition> pred, TState elseState)
+        public TransitionContainer<TState, TTransition> IfElse(Predicate<TTransition> pred, TState elseState)
         {
             If(pred);
             Holder[_path.Source, elseState] = t => !pred(t);
